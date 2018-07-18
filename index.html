@@ -1,0 +1,94 @@
+<div class="container-fluid">
+  <div class="row text-center">
+    <h2>Respostas e wiki</h2>
+  </div>
+  <div class="row text-center" id="data">
+    <div class="col-xs-offset-3 col-xs-6">
+      <form class="form-inline">
+        <div class="input-group">
+          <input type="text" class="form-control" id="searchPara">
+          <div class="input-group-addon search-query"><span class="glyphicon glyphicon-search" id="searchThis"></span></div>
+        </div>
+      </form>
+    </div>
+    <div class="col-xs-12 text-center">
+      <p id="jasonInfo1">
+      </p>
+    </div>
+  </div>
+</div>
+<style>
+@import url('https://fonts.googleapis.com/css?family=Cormorant+Garamond');
+body {
+  background: #4183D7;
+  color: white;
+  font-size: 18px;
+  font-family: 'Cormorant Garamond', serif;
+}
+.name{
+  font-family: serif;
+  font-weight: bold;
+}
+.search-query {
+  background-color: #ffffff;
+  color:#4183D7;
+  font-size: 1em;
+  cursor: pointer;
+}
+#searchPara{
+  background-color: white;
+  height: 3em
+}
+.externlink{
+  padding-bottom: 10px;
+  display: block;
+}
+a {
+  color: black;
+  font-size: 0.8em;
+  padding-top: 5px;
+}
+</style>
+<script>
+$(document).ready(function() {
+
+  var text1 = "";
+
+  //Get info from wikipedia api with search btn click
+  $("#searchThis").click(function() {
+    var userText = $("#searchPara").val();
+    wikipediaSearchApi(userText);
+  });
+
+  //Making search available via enter key press
+  $("#searchPara").keypress(function(event) {
+    if (event.which == 13) {
+      event.preventDefault();
+      var userText = $("#searchPara").val();
+      wikipediaSearchApi(userText);
+    }
+  });
+
+  function wikipediaSearchApi(string) {
+    
+    $.ajax({
+      url: 'http://en.wikipedia.org/w/api.php',
+      data: { action: 'query', list: 'search', srsearch: string, format: 'json' },
+      dataType: 'jsonp',
+      success: function (result) {
+        console.log(result);
+        $.each(result.query.search, function(i, res) {
+          text1 += "<span class='Name'>" + res.title + "</span><br>" + res.snippet + "<br><hr>";
+        });
+         //display value from wikipedia to html page
+        document.getElementById("jasonInfo1").innerHTML = text1;
+
+        //Setting var text1 to empty, avoing multiple inputs to html
+        text1 = "";
+        document.getElementById("searchPara").value = "";
+      }
+    });
+  }
+
+});
+</script>
